@@ -1,0 +1,41 @@
+version: "3.9"
+
+networks:
+  web:
+    external: true
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    volumes: 
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+
+  django:
+    build: .
+    command: gunicorn languagelearn.asgi:application -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+    networks:
+      - web
