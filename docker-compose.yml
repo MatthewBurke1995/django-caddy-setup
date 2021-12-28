@@ -9,6 +9,7 @@ services:
     image: caddy:2-alpine
     volumes: 
       - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data/static:/srv
     ports:
       - "80:80"
       - "443:443"
@@ -16,13 +17,15 @@ services:
       - web
   db:
     image: postgres
+    container_name: db
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
+    networks:
+      - web
 
   django:
     build: .
@@ -37,5 +40,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     depends_on:
       - db
+    links:
+      - db:db
     networks:
       - web

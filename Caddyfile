@@ -1,18 +1,14 @@
-localhost:80 {
+localhost {
+	handle_path /static/* {
+		file_server
+	}
+
 	reverse_proxy django:8000
+	file_server /static/*
 }
 
-localhost:443 {
-        reverse_proxy django:8000
-}
+encode gzip
 
 
-127.0.0.1:80 {
-	reverse_proxy django:8000
-}
-
-127.0.0.1:443 {
-        reverse_proxy django:8000
-}
 
 
