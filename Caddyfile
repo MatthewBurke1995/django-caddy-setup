@@ -1,4 +1,11 @@
+localhost:80/health {
+        respond {"health":"ok"} 200
+}
+
 localhost {
+
+	respond /health {"health":"ok"} 200
+
 	handle_path /static/* {
 		file_server
 	}
@@ -6,6 +13,7 @@ localhost {
 	reverse_proxy django:8000
 	file_server /static/*
 }
+
 
 encode gzip
 
