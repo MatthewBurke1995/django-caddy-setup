@@ -1,4 +1,5 @@
-```sudo docker-compose run django django-admin startproject project .
+```
+sudo docker-compose run django django-admin startproject project .
 
 vi project/settings.py```
 
