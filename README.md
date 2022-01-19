@@ -1,7 +1,8 @@
 ```
 sudo docker-compose run django django-admin startproject project .
 
-vi project/settings.py```
+vi project/settings.py
+```
 
 write in the following:
 ```
