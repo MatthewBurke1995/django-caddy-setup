@@ -1,0 +1,43 @@
+{
+	email mperoburke@gmail.com
+}
+
+
+matthewburke.xyz www.matthewburke.xyz {
+
+	respond /health {"health":"ok"} 200
+
+	handle_path /static/* {
+		file_server
+	}
+
+	rewrite /wordle /static/wordle.html
+
+	reverse_proxy django:8000
+	file_server /static/*
+
+	log {
+		output file /var/log/access.log {
+			roll_size 5MiB
+			roll_keep 5
+		}
+		format filter {
+			wrap console
+			fields {
+				common_log delete
+				request>remote_addr ip_mask {
+					ipv4 24
+					ipv6 32
+				}
+			}
+		}
+	}
+
+}
+
+route {
+	header           Cache-Control max-age=3600
+	header /static/* Cache-Control max-age=31536000
+}
+
+encode gzip

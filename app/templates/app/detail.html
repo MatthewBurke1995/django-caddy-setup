@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	{% if post %}
+	    <div class="ui raised segment">
+              <h2 class="ui header" style="display: inline">{{ post.post_title }}</h2>
+	      <em class="post-index-date">{{ post.post_date|date }}</em>
+              <p>{{post.post_text | safe }}</p>
+	      {% if tags %}
+	      <p> tags: {{ tags|join:", " }}
+	      {% endif %}
+            </div>
+	{% else %}
+	   <p>This post no longer exists :(</p>
+	{% endif %}
+{% endblock %}

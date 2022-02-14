@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	{% if latest_post_list %}
+	    {% for post in latest_post_list %}
+	    <div class="ui piled segment">
+              <h2 class="ui header" style="display: inline"><a href="/{{ post.id }}/">{{ post.post_title }}</a></h2>
+	      <em class="post-index-date">{{ post.post_date|date }}</em>
+              <p>{{post.summary|safe }}...</p>
+            </div>
+	    {% endfor %}
+	{% else %}
+	    <p>No posts are available.</p>
+	{% endif %}
+{% endblock %}

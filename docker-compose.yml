@@ -1,0 +1,53 @@
+version: "3.9"
+
+networks:
+  web:
+    external: true
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    volumes: 
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data/static:/srv
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost/health"]
+        interval: 10m30s
+        timeout: 5s
+        retries: 2
+        start_period: 1m
+
+  db:
+    image: postgres
+    container_name: db
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    networks:
+      - web
+
+  django:
+    build: .
+    command: gunicorn project.asgi:application -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      - web
