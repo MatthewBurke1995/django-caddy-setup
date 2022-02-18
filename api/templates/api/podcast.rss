@@ -1,0 +1,22 @@
+{% block content %}
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Matt's listening</title>
+    <description>For personal use</description>
+    <language>en-us</language>
+    <link>https://www.matthewburke.xyz</link>
+    {% if episodes %}
+      {% for episode in episodes %}
+      <item>
+	<title>{{episode.title}}</title>
+	<description>{{episode.description}}</description>
+	<pubDate>{{episode.pub_date}}</pubDate>
+	<enclosure url={{episode.url}} type="audio/mpeg" length={{episode.length}}/>
+      </item>
+      {% endfor %}
+   {% endif %}
+  </channel>
+</rss>
+{% endblock %}

@@ -8,7 +8,10 @@
 	      <em class="post-index-date">{{ post.post_date|date }}</em>
               <p>{{post.post_text | safe }}</p>
 	      {% if tags %}
-	      <p> tags: {{ tags|join:", " }}
+
+	      <p>tags: {% for tag in tags %}
+	      <a href="/tag/{{tag}}">{{tag}}</a>,
+			{% endfor %}
 	      {% endif %}
             </div>
 	{% else %}
