@@ -3,7 +3,6 @@ from ninja import NinjaAPI
 import youtube_dl
 from .models import Episode
 from django.utils import timezone
-from . import views
 from django.contrib.syndication.views import Feed
 
 api = NinjaAPI()
@@ -13,9 +12,9 @@ ydl_opts = {
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
-        'preferredquality': '192',
+        'preferredquality': '128',
     }],
-    'outtmpl': 'data/static/podcasts/audio/%(title)s.mp3'
+    'outtmpl': 'data/static/podcasts/audio/%(id)s.mp3'
 }
 
 @api.post("/add")
@@ -23,13 +22,14 @@ def add(request, youtube_video: str):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_video, download=False)
         title = info_dict["title"]
-        url = f'https://matthewburke.xyz/static/podcasts/audio/{title}.mp3'
+        id_ = info_dict["id"]
+        url = f'https://matthewburke.xyz/static/podcasts/audio/{id_}.mp3'
         description = info_dict["description"]
 
         episode = Episode(title=title, pub_date=timezone.now(), description=description, length=10000, url=url)
         ydl.download([youtube_video])
         episode.save()
-    return {"result": "success"}
+    return {"result": info_dict}
 
 
 
@@ -46,6 +46,9 @@ class LatestPostFeed(Feed):
 
     def item_description(self, item):
         return item.description
+
+    def item_pubdate(self, item):
+        return item.pub_date
 
     def item_link(self, item):
         return item.url
