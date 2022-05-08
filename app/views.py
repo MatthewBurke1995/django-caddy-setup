@@ -8,7 +8,7 @@ from django.template import loader
 
 
 def index(request):
-    latest_post_list = Post.objects.order_by("-post_date")[:5]
+    latest_post_list = Post.objects.order_by("-post_date")
     template = loader.get_template("app/index.html")
     context = {
         "latest_post_list": latest_post_list,
